@@ -16,5 +16,6 @@ import {StockManagersEntity} from "../entities/stockManagers.entity";
         TypeOrmModule.forFeature([StockEntity, StockManagersEntity]),
         UsersModule
     ],
+    exports: [StockService]
 })
 export class StockModule {}

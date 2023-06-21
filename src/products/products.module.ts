@@ -21,6 +21,7 @@ import {ProductsManagerEntity} from "../entities/productsManager.entity";
 
     ],
     exports: [
+        ProductsService
     ]
 })
 export class ProductsModule{

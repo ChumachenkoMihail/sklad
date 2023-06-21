@@ -4,6 +4,7 @@ import {UsersModule} from "../users/user.module";
 import {CategoriesEntity} from "../entities/categories.entity";
 import {CategoriesController} from "./cetegories.controller";
 import {CategoriesService} from "./cetegories.service";
+import {CategoriesManagerEntity} from "../entities/categoriesManager.entity";
 
 
 @Module({
@@ -12,7 +13,7 @@ import {CategoriesService} from "./cetegories.service";
         CategoriesService,
     ],
     imports: [
-        TypeOrmModule.forFeature([CategoriesEntity]),
+        TypeOrmModule.forFeature([CategoriesEntity, CategoriesManagerEntity]),
         UsersModule
     ],
     exports: [CategoriesService]

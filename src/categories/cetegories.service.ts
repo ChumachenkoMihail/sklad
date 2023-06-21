@@ -1,10 +1,11 @@
 import {BadRequestException, Injectable} from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
-import {IsNull, Repository} from "typeorm";
+import {In, IsNull, Repository} from "typeorm";
 import {UsersService} from "../users/users.service";
 import {CreateCategoryDto} from "./dto/createCategory.dto";
 import {CategoriesEntity} from "../entities/categories.entity";
 import {UpdateCategoryDto} from "./dto/updateCategory.dto";
+import {CategoriesManagerEntity} from "../entities/categoriesManager.entity";
 
 
 @Injectable()
@@ -12,39 +13,83 @@ export class CategoriesService {
     constructor(
         @InjectRepository(CategoriesEntity)
         private readonly categoriesRepository: Repository<CategoriesEntity>,
+
+        @InjectRepository(CategoriesManagerEntity)
+        private readonly categoriesManagerEntity: Repository<CategoriesManagerEntity>,
         private usersService: UsersService
     ) {
     }
 
+    async getUserCategories(userId: number){
+        return await this.categoriesRepository.createQueryBuilder()
+            .where("userId = :id", {id : userId})
+            .getMany()
+        // await this.categoriesRepository.findOne({
+        //     relations: {user: true},
+        //     where: {
+        //         user: {
+        //             id: 1
+        //         }
+        //     }
+        // })
+    }
+
     async getFirstCategories(userId: number) {
+        console.log(userId);
+        const existCategories = await this.categoriesManagerEntity.find({
+            where: {
+                user_id: userId
+            }
+        })
+        if(!existCategories){
+            throw new BadRequestException('Category with id not found')
+        }
+        let ids = [];
+        existCategories.map(category => {
+            ids.push(+category.id)
+        })
+        console.log(ids);
+
         return await this.categoriesRepository.find({
             where: {
-                user: {
-                    id: userId
-                },
+                id: In(ids),
                 parent: IsNull()
             }
         })
     }
 
     async getCategoryChildren(categoryId: number, userId: number) {
+        const existCategory = await this.categoriesManagerEntity.findOne({
+            where: {
+                category_id: categoryId,
+                user_id: userId
+
+            }
+        })
+        if(!existCategory){
+            throw new BadRequestException('Category with id not found')
+        }
         return await this.categoriesRepository.find({
             where: {
-                user: {
-                    id: userId
-                },
-                parent: {id: categoryId}
+                parent: { id: categoryId }
             }
         })
     }
 
     async getAllCategoryChildren(categoryId: number, userId: number) {
+        const existCategory = await this.categoriesManagerEntity.findOne({
+            where: {
+                category_id: categoryId,
+                user_id: userId
+
+            }
+        })
+        if(!existCategory){
+            throw new BadRequestException('Category with id not found')
+        }
         let result = [];
         const children = await this.categoriesRepository.find({
             where: {
-                user: {
-                    id: userId
-                },
                 parent: {id: categoryId}
             }
         })
@@ -74,11 +119,21 @@ export class CategoriesService {
     }
 
     async getParentCategory(categoryId: number, userId: number) {
+        const existCategory = await this.categoriesManagerEntity.findOne({
+            where: {
+                category_id: categoryId,
+                user_id: userId
+
+            }
+        })
+        if(!existCategory){
+            throw new BadRequestException('Category with id not found')
+        }
+
         const parent = await this.categoriesRepository.findOne({
             relations: {parent: true},
             where: {
-                id: categoryId,
-                user: {id: userId}
+                id: categoryId
             }
         })
         if (!parent.parent) {
@@ -104,13 +159,19 @@ export class CategoriesService {
 
 
     async deleteCategory(categoryId: number, userId: number) {
-        const ifCategoryExists = await this.getCategoryById(categoryId, userId);
-        if (!ifCategoryExists) {
+        const existCategory = await this.categoriesRepository.findOne({
+            where: {
+                id: categoryId,
+                user: {id: userId}
+
+            }
+        })
+        if(!existCategory){
             throw new BadRequestException('Category with id not found')
         }
 
         return await this.categoriesRepository.delete({
-            id: ifCategoryExists.id
+            id: existCategory.id
         })
     }
 
@@ -134,6 +195,17 @@ export class CategoriesService {
     }
 
     async updateCategory(categoryId: number, body: UpdateCategoryDto, userId) {
+        const existCategory = await this.categoriesManagerEntity.findOne({
+            where: {
+                category_id: categoryId,
+                user_id: userId
+
+            }
+        })
+        if(!existCategory){
+            throw new BadRequestException('Category with id not found')
+        }
+
         if (!body.parentCategoryId && !body.name) {
             throw new BadRequestException('Nothing to update');
         }
@@ -172,12 +244,20 @@ export class CategoriesService {
     }
 
     async getCategoryById(id: number, userId: number) {
+        const existCategory = await this.categoriesManagerEntity.findOne({
+            where: {
+                category_id: id,
+                user_id: userId
+
+            }
+        })
+        if(!existCategory){
+            throw new BadRequestException('Category with id not found')
+        }
+
         return await this.categoriesRepository.findOne({
             where: {
-                id,
-                user: {
-                    id: userId
-                }
+                id
             }
         })
     }

@@ -1,0 +1,37 @@
+<body>
+<fieldset>
+    {{# if message }}
+        <p class="alert alert-danger">{{ this.message }}</p>
+    {{/if}}
+</fieldset>
+<div class="container">
+    <br><br><br><br><br>
+    <div class="row">
+        <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+            <div class="card card-signin my-5">
+                <div class="card-body">
+                    <h5 class="card-title text-center">Login</h5>
+                    <form class="form-signin" method="post" action="/auth/login">
+                        <div class="form-label-group">
+                            <label for="username">Username</label>
+                            <input type="text" name="username" id="username" class="form-control" placeholder="Enter username"
+                                   required autofocus value="{{username}}">
+                        </div>
+                        <br>
+                        <div class="form-label-group">
+                            <label for="inputPassword">Password</label>
+                            <input type="password" name="password" id="inputPassword" class="form-control"
+                                   placeholder="Enter password" required value="{{password}}">
+                        </div>
+                        <br>
+                        <a class=" float-left" href="/forgot-password">Forgot password?</a>
+                        <br>
+                        <br>
+                        <button class="btn btn-lg btn-primary btn-block" type="submit">Login</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>

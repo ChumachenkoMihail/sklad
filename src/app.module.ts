@@ -7,6 +7,7 @@ import {AuthModule} from "./auth/auth.module";
 import {StockModule} from "./stock/stock.module";
 import {ProductsModule} from "./products/products.module";
 import {CategoriesModule} from "./categories/cetegories.module";
+import {InvitesModule} from "./invites/invites.module";
 
 
 config()
@@ -22,13 +23,14 @@ config()
             database: process.env.DB_DATABASE,
             synchronize: true,
             entities: ['dist/**/*.entity{.ts,.js}'],
-            // logging: true
+            logging: false
         }
     ),
       AuthModule,
       StockModule,
       ProductsModule,
-      CategoriesModule
+      CategoriesModule,
+      InvitesModule
   ],
   controllers: [AppController],
   providers: [AppService],
