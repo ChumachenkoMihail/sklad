@@ -8,7 +8,6 @@ export class AppController {
 
   @Get('/')
   main(@Req() req: Request, @Res() res) {
-    console.log('bla-bla');
 return res.render('login.hbs')
   }
 

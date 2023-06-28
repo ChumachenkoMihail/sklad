@@ -62,7 +62,7 @@ export class StockController {
     }
 
     @Get('getStocks')
-    // @UseGuards(AccessTokenGuard)
+    @UseGuards(AccessTokenGuard)
     @ApiResponse({
         status: 401,
         description: 'Unauthorized',
@@ -70,9 +70,9 @@ export class StockController {
     async getUserStocks(
         @Req() req: Request,
         @Res() res,
-        // @CurrentUser('userId') userId: number,
+        @CurrentUser('userId') userId: number,
     ){
-        const result = await this.stockService.getUserStocks(1);
+        const result = await this.stockService.getUserStocks(userId);
         console.log(result);
         return res.render('stocks.hbs', {result: result})
     }

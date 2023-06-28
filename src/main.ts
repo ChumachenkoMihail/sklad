@@ -5,6 +5,7 @@ import {NestExpressApplication} from "@nestjs/platform-express";
 import * as path from "path";
 import * as hbs from 'express-handlebars';
 import {join} from 'path';
+import * as cookieParser from 'cookie-parser';
 
 
 async function bootstrap() {
@@ -17,14 +18,18 @@ async function bootstrap() {
         ],
         credentials: true,
     });
+    app.use(cookieParser());
     app.setViewEngine('hbs');
     app.set('view options', {layout: 'layout'});
     app.setBaseViewsDir(join(__dirname, '..', 'views'));
     app.useStaticAssets(join(__dirname, '..', 'public'));
     app.engine('hbs', hbs({ extname: 'hbs',partialsDir: join(__dirname, '..', 'views/partials'), defaultLayout: 'layout.hbs',
         layoutsDir: join(__dirname, '..', 'views/layouts'),}));
-
-
+    app.use((req,res,next)=>{
+        if(req.cookies.jwt)
+            res.locals.authenticated = true;
+        next();
+    });
 
 
 

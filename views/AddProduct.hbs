@@ -1,0 +1,87 @@
+<body>
+<style>
+    .modal{
+        background-color: rebeccapurple;
+    }
+</style>
+<script>
+    let properties = { properties: []}
+</script>
+
+<form method="post" action="/categories/createCategory">
+
+    <div class="reg-group">
+        <input type="text" class="reg-input" placeholder="Назва товару" required pattern="[А-ЯІЇЄ]+[а-яіїє]+ *" name="name">
+    </div>
+
+    <div class="reg-group">
+        <input type="text" class="reg-input" placeholder="Назва товару" required pattern="[А-ЯІЇЄ]+[а-яіїє]+ *" name="description">
+    </div>
+
+
+
+    <div class="reg-group">
+        <input type="hidden" name="properties">
+        <input type="button" onclick="openModal()" value="Додати параметр">
+    </div>
+    <div style="display: none" id="modal" class="modal">
+        <input type="text" name="propertyName" placeholder="imya parametra" id="paramName">
+        <input type="text" name="propertyValue" placeholder="znachennya parametra" id="paramValue">
+        <input type="button" onclick="closeModal()" value="Додати">
+    </div>
+
+    <div id="properties">
+
+    </div>
+
+
+
+
+    <div class="reg-group">
+        <input type="text" class="reg-input" placeholder="Артикул" required pattern="[А-ЯІЇЄ]+[а-яіїє]+ *" name="vendorCode">
+    </div>
+
+    <div class="reg-group">
+        <input type="text" class="reg-input" placeholder="Ціна" required pattern="[А-ЯІЇЄ]+[а-яіїє]+ *" name="price">
+    </div>
+
+
+
+    <div>
+        <input type="button" class="reg-button" value="OK" id="spec">
+    </div>
+
+</form>
+
+</body>
+
+<script>
+    function openModal(){
+        const modal = document.getElementById('modal');
+        modal.style.display = 'block';
+    }
+
+    function closeModal(){
+        const paramNameRaw = document.getElementById('paramName');
+        const paramValueRaw = document.getElementById('paramValue');
+
+        const paramName = paramNameRaw.value;
+        const paramValue = paramValueRaw.value;
+
+        properties.properties.push({name: paramName, value: paramValue});
+
+        paramValueRaw.value = '';
+        paramNameRaw.value = '';
+
+        console.log(properties);
+
+        const modal = document.getElementById('modal');
+        modal.style.display = 'none';
+
+        const props = document.getElementById('properties')
+        const property = document.createElement('div');
+        property.appendChild(document.createTextNode(`Imya: ${paramName} Zhachennya: ${paramValue}`))
+        props.appendChild(property);
+        console.log(JSON.stringify(properties).replaceAll('\"', '\\\"'));
+    }
+</script>

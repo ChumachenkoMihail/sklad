@@ -27,8 +27,9 @@ export class ProductsService {
         if (ifProductExists) {
             throw new BadRequestException('Product with vendor code already exists')
         }
+        console.log('here')
         const user = await this.usersService.findUserById(userId);
-
+console.log('we are here')
         const newProduct = new ProductsEntity();
         newProduct.name = body.name;
         newProduct.vendorCode = body.vendorCode;
@@ -59,6 +60,9 @@ export class ProductsService {
                 vendorCode
             }
         })
+        if(!product){
+            return ;
+        }
 
         const manager = await this.productsManagerRepository.findOne({
             where: {

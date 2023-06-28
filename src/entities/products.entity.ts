@@ -42,6 +42,7 @@ export class ProductsEntity {
 
     @Column({
         nullable: true,
+        type: 'decimal'
     })
     price: number;
 

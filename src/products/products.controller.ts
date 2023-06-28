@@ -17,6 +17,13 @@ export class ProductsController {
     constructor(private productsService: ProductsService) {}
 
 
+    @Get('/createProduct')
+    // @UseGuards(AccessTokenGuard)
+    getCreateProduct(
+        @Res() res
+    ){
+        return res.render('AddProduct.hbs')
+    }
 
     @Post('/createProduct')
     @UseGuards(AccessTokenGuard)

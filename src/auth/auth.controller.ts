@@ -32,6 +32,12 @@ import { Response } from 'express';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  @Get('/register')
+  reg(
+      @Res() res,
+  ){
+    return res.render('register.hbs')
+  }
   @Post('/register')
   @ApiResponse({
     status: 201,
@@ -66,7 +72,7 @@ export class AuthController {
     description: 'Invalid password',
   })
   @ApiOperation({ summary: 'Login' })
-  login(@Req() req: Request, @Body() body: LoginDto) {
+  async login(@Req() req: Request, @Body() body: LoginDto) {
     return this.authService.login(body);
   }
 

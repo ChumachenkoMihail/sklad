@@ -1,0 +1,56 @@
+<body>
+{{>header}}
+<div class="reg-content" align="center">
+    <form method="post"id="form">
+        <div>
+            <h1 class="form-title" id="greg">Реєстрація</h1>
+        </div>
+        <div class="reg-group">
+            <input type="email" class="reg-input" placeholder="Логін" name="email" required id="spec">
+        </div>
+        <div class="reg-group">
+            <input type="password" class="reg-input" placeholder="Пароль" name="password" required pattern="[\w]{6,12}" title="Пароль має містити від 6 до 12 символів, складатися з букв латинського алфавіту та цифр, мати одну велику літеру" id="spec">
+        </div>
+        <div class="reg-group">
+            <input type="submit" class="reg-button" value="Увійти" id="spec">
+        </div>
+        <br>
+        <div>
+            <a href="/">Авторизуватися</a>
+        </div>
+    </form>
+</div>
+</body>
+
+<script>
+    $('#form').on('submit', function(e){
+        e.preventDefault();
+
+        let form = $(this);
+        let data = form.serializeArray();
+        console.log(data);
+        $.ajax({
+            type: 'POST',
+            url: '/auth/register',
+            data: data,
+            success: function (response){
+                console.log(response);
+                setCookie('jwt', response.accessToken)
+                location.href= '/stock/getStocks'
+            },
+            error: function (xhr, ajaxOptions, thrownError){
+                alert(xhr.responseJSON.message);
+            }
+        })
+
+    })
+    function setCookie(name,value,days) {
+        var expires = "";
+        if (days) {
+            var date = new Date();
+            date.setTime(date.getTime() + (days*24*60*60*1000));
+            expires = "; expires=" + date.toUTCString();
+        }
+        document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+    }
+</script>

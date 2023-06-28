@@ -1,7 +1,99 @@
-<div>gavno</div>
-<div> {{#each result}}
-<div>
-{{name}}
+<div class="main">
+    {{>header}}
+    <div style="display: flex; justify-content: space-around">
+    <div class="person_content">
+        <div style="display: flex; justify-content: space-between">
+            <div class="personal_margin_top personal_margin_left">
+                Назва склада: <br>
+                Адреса склада:<br>
+                Опис склада:
+            </div>
+
+            <div>
+        <!--
+            <div class="personal_margin_left personal_margin_top">
+                Загальна площа: {{square}} м.кв.<br>
+                Опалювальна: {{heated_square}} м.кв.<br>
+                Проживають: {{tenants}}<br>
+            </div>
+        -->
+        </div>
+        <hr size="2" noshade>
+    <!--
+     <div style="display: flex; justify-content: space-between">
+            <div class="personal_margin_top personal_margin_left">
+                <a href="/enter">Внести показання</a>
+            </div>
+            <div class="personal_margin_top">
+                <a href="/accruals">Статистика нарахувань</a>
+            </div>
+            <div class="personal_margin_top">
+                <a href="pay">Сплатити послуги</a>
+            </div>
+            <div class="personal_margin_top personal_margin_left">
+                <a href="/payments">Історія платежів</a>
+            </div>
+            -->
+        </div>
+        <br><br>
+        <!--
+           <div>
+            {{#each counters}}
+                 <div style="display: flex; justify-content: space-around">
+                    <div class="counter">
+                        <table width="95%">
+                            <tr align="center">
+                                <td style="color: #5041eb">
+                                    Назва послуги
+                                </td>
+                                <td style="color: #5041eb">
+                                    Останні показання
+                                </td>
+                            </tr>
+                            <tr style="margin-left: 30px">
+                                <td>
+                                    {{service_name}} <br>
+                                    <z style="opacity: 0.7">
+                                        (o.p {{schet}} ) <br>
+                                        Лічильник № {{counter_number}}<br>
+                                    </z>
+                                </td>
+                                <td align="center">
+                                    {{last_value}}
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <br>
+            {{/each}}
+        </div>
+        -->
+    </div>
 </div>
-{{/each}}
+<!--<p align="center" style="margin-bottom: 25px">Мои объекты:</p>
+<div class="person_objects_row">
+    <div class="person_object">
+        <div class="obj_top" align="center">
+            {{street}}<br>
+            д. {{house}}<br>
+            кв. {{flat}}<br>
+        </div>
+        <div align="center">
+            Показать историю <a href="#">начислений</a> / <a href="#">оплаты</a>
+        </div>
+        <div class="smt">
+            <span>Cумма к оплате:</span>
+            <span>0,00 грн</span>
+        </div>
+        <div>
+            <form>
+                <input type="submit" value="Оплатить" class="button">
+            </form>
+        </div>
+    </div>
+</div>-->
+
+
+
 </div>

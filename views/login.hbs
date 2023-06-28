@@ -1,37 +1,56 @@
 <body>
-<fieldset>
-    {{# if message }}
-        <p class="alert alert-danger">{{ this.message }}</p>
-    {{/if}}
-</fieldset>
-<div class="container">
-    <br><br><br><br><br>
-    <div class="row">
-        <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
-            <div class="card card-signin my-5">
-                <div class="card-body">
-                    <h5 class="card-title text-center">Login</h5>
-                    <form class="form-signin" method="post" action="/auth/login">
-                        <div class="form-label-group">
-                            <label for="username">Username</label>
-                            <input type="text" name="username" id="username" class="form-control" placeholder="Enter username"
-                                   required autofocus value="{{username}}">
-                        </div>
-                        <br>
-                        <div class="form-label-group">
-                            <label for="inputPassword">Password</label>
-                            <input type="password" name="password" id="inputPassword" class="form-control"
-                                   placeholder="Enter password" required value="{{password}}">
-                        </div>
-                        <br>
-                        <a class=" float-left" href="/forgot-password">Forgot password?</a>
-                        <br>
-                        <br>
-                        <button class="btn btn-lg btn-primary btn-block" type="submit">Login</button>
-                    </form>
-                </div>
-            </div>
+{{>header}}
+<div class="reg-content" align="center">
+    <form method="post" id="form">
+        <div>
+            <h1 class="form-title" id="greg">Авторизація</h1>
         </div>
-    </div>
+        <div class="reg-group">
+            <input type="email" class="reg-input" placeholder="Логін" name="email" required id="spec">
+        </div>
+        <div class="reg-group">
+            <input type="password" class="reg-input" placeholder="Пароль" name="password" required pattern="[\w]{6,12}" title="Пароль має містити від 6 до 12 символів, складатися з букв латинського алфавіту та цифр" id="spec">
+        </div>
+        <div class="reg-group">
+            <input type="submit" class="reg-button" value="Увійти" id="spec">
+        </div>
+        <br>
+        <div>
+            <a href="/auth/register">Зареєструватися</a>
+        </div>
+    </form>
 </div>
 </body>
+
+<script>
+   $('#form').on('submit', function(e){
+       e.preventDefault();
+
+       let form = $(this);
+       let data = form.serializeArray();
+       console.log(data);
+       $.ajax({
+            type: 'POST',
+           url: '/auth/login',
+           data: data,
+           success: function (response){
+                console.log(response);
+                setCookie('jwt', response.accessToken)
+                location.href= '/stock/getStocks'
+           },
+           error: function (xhr, ajaxOptions, thrownError){
+            alert(xhr.responseJSON.message);
+           }
+       })
+
+   })
+   function setCookie(name,value,days) {
+       var expires = "";
+       if (days) {
+           var date = new Date();
+           date.setTime(date.getTime() + (days*24*60*60*1000));
+           expires = "; expires=" + date.toUTCString();
+       }
+       document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+   }
+</script>

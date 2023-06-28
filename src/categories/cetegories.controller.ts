@@ -24,11 +24,11 @@ export class CategoriesController {
     })
     createCategory(
         @Req() req: Request,
-        @Body() body: CreateCategoryDto,
-        @CurrentUser('userId') userId: number,
-    ){
-        return this.categoriesService.createCategory(body, userId);
-    }
+    @Body() body: CreateCategoryDto,
+    @CurrentUser('userId') userId: number,
+){
+    return this.categoriesService.createCategory(body, userId);
+}
 
     @Get('getFirstCategories')
     @UseGuards(AccessTokenGuard)
