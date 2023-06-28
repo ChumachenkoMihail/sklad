@@ -58,7 +58,7 @@ export class ProductsController {
         @Param('productId') productId: number,
         @CurrentUser('userId') userId: number,
     ){
-        return this.productsService.deleteProduct(Number(productId), userId);
+       return this.productsService.deleteProduct(Number(productId), userId);
     }
 
     @Get('getProducts')
@@ -67,11 +67,13 @@ export class ProductsController {
         status: 401,
         description: 'Unauthorized',
     })
-    getUserProducts(
+   async getUserProducts(
         @Req() req: Request,
+        @Res()res,
         @CurrentUser('userId') userId: number,
     ){
-        return this.productsService.getUserProducts(userId);
+        const result = await this.productsService.getUserProducts(userId);
+    return res.render('GetProducts.hbs',{result: result});
     }
 
     @Get('getProductInfo/:productId')
@@ -80,11 +82,13 @@ export class ProductsController {
         status: 401,
         description: 'Unauthorized',
     })
-    getUserProductById(
+   async getUserProductById(
         @Req() req: Request,
+        @Res() res,
         @Param('productId') productId: number,
         @CurrentUser('userId') userId: number,
     ){
-        return this.productsService.getProductById(Number(productId), userId);
-    }
+      const result = await this.productsService.getProductById(Number(productId), userId);
+    return res.render('InformOfProduct.hbs', {result: result});
+        }
 }

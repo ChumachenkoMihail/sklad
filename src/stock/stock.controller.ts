@@ -83,11 +83,13 @@ export class StockController {
         status: 401,
         description: 'Unauthorized',
     })
-    getUserStockById(
+    async getUserStockById(
         @Req() req: Request,
+        @Res() res,
         @Param('stockId') stockId: number,
         @CurrentUser('userId') userId: number,
     ){
-        return this.stockService.getStockById(Number(stockId), userId);
+        const result = await this.stockService.getStockById(Number(stockId), userId);
+        return res.render('stockById.hbs', {result: result});
     }
 }

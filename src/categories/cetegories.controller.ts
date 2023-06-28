@@ -36,11 +36,13 @@ export class CategoriesController {
         status: 401,
         description: 'Unauthorized',
     })
-    getFirstCategories(
+   async getFirstCategories(
         @Req() req: Request,
+        @Res()res,
         @CurrentUser('userId') userId: number,
     ){
-        return this.categoriesService.getFirstCategories(userId);
+        const result = await this.categoriesService.getFirstCategories(userId);
+        return res.render('FirstCategories.hbs',{result: result});
     }
 
     @Get('getCategoryChildren/:categoryId')
@@ -49,12 +51,14 @@ export class CategoriesController {
         status: 401,
         description: 'Unauthorized',
     })
-    getCategoriesChildren(
+    async getCategoriesChildren(
         @Req() req: Request,
+        @Res()res,
         @Param('categoryId') categoryId: number,
         @CurrentUser('userId') userId: number,
     ){
-        return this.categoriesService.getCategoryChildren(Number(categoryId),userId);
+        const result = await this.categoriesService.getCategoryChildren(Number(categoryId),userId);
+        return res.render('GetChildrenCategory.hbs',{result: result});
     }
 
     @Get('getFullCategories')
@@ -63,11 +67,13 @@ export class CategoriesController {
         status: 401,
         description: 'Unauthorized',
     })
-    getFullCategories(
+    async getFullCategories(
         @Req() req: Request,
+        @Res()res,
         @CurrentUser('userId') userId: number,
     ){
-        return this.categoriesService.getFullCategories(userId);
+        const result = await this.categoriesService.getFullCategories(userId);
+        return res.render('FullCategories.hbs',{result: result});
     }
 
     @Post('/editCategory/:categoryId')
