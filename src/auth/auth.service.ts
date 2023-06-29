@@ -5,11 +5,7 @@ import {compare, hashSync} from 'bcrypt';
 import {JwtService} from '@nestjs/jwt';
 import {config} from 'dotenv';
 import * as process from 'process';
-// import { MailerService } from '@nestjs-modules/mailer';
 // import { Invites } from '../entities/invites.entity';
-import {randomBytes} from 'crypto';
-import {InjectRepository} from '@nestjs/typeorm';
-import {Repository} from 'typeorm';
 
 config();
 
@@ -18,7 +14,6 @@ export class AuthService {
     constructor(
         private usersService: UsersService,
         private jwtService: JwtService,
-        // private mailerService: MailerService,
     ) {
     }
 
@@ -26,11 +21,11 @@ export class AuthService {
         //check if user exists
         const userExists = await this.usersService.findUserByEmail(user.email);
         if (userExists) {
-            throw new BadRequestException('User already exists');
+            throw new BadRequestException('Такий користувач вже існує');
         }
         // check password strong
         if (!user.password.match(/^((?!.*[\s])(?=.*[A-Z])(?=.*\d).{8,128})/)) {
-            throw new BadRequestException('Password is too weak');
+            throw new BadRequestException('Слабкий пароль');
         }
 
         //hash password
@@ -55,12 +50,12 @@ export class AuthService {
         //check if user exists
         const user = await this.usersService.findUserByEmail(loginDto.email);
         if (!user) {
-            throw new BadRequestException('User does not exist');
+            throw new BadRequestException('Такого користувача не існує');
         }
         // check is passwords equal
         const isPasswordEqual = await compare(loginDto.password, user.password);
         if (!isPasswordEqual) {
-            throw new BadRequestException('Invalid password');
+            throw new BadRequestException('Неправильний пароль');
         }
 
         // generate new tokens

@@ -1,0 +1,251 @@
+<div class="main">
+    <style>
+        a:hover {
+            text-decoration: none !important;
+            opacity: 0.6 !important;
+        }
+
+        a {
+            text-decoration: none !important;
+            color: black !important;
+            opacity: 1 !important;
+        }
+
+        .popup-fade:before {
+            content: '';
+            background: #000;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.2;
+            z-index: 9999;
+        }
+
+        .sign_button {
+            width: 7vw;
+            height: 35px;
+            border-radius: 15px;
+            /*background-color: #293498;*/
+            color: white;
+            text-align: center;
+            line-height: 3vh;
+            word-break: break-word;
+        }
+
+        .mol {
+            align-items: center;
+            justify-content: center;
+            position: fixed;
+            z-index: 9999;
+            top: 40%;
+            width: 100%;
+            height: 100%;
+        }
+
+        .mol[open] {
+            display: flex;
+        }
+
+        .mol-inner {
+            border: 3px solid #000000;
+            background-color: white;
+            border-radius: 1em;
+            max-width: 600px;
+            padding: 2em;
+            margin: auto;
+        }
+
+        .mol-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mol_content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mc_2 {
+            margin-left: 5px;
+        }
+
+        .bbb {
+            border: 1px solid black;
+            padding: 3px;
+        }
+    </style>
+    {{>header}}
+    <div class="person_head">
+        <div>
+            <p style="text-decoration: underline"><b>Мої товари</b></p>
+            <br>
+            <a href="/products/createProduct">
+                Додати товар
+            </a>
+        </div>
+        <div></div>
+    </div>
+    <div style="display: flex; justify-content: space-around">
+        <div class="person_content">
+            {{#each result}}
+            <div id="{{id}}el">
+                <div style="display: flex; justify-content: space-between">
+                    <div class="personal_margin_top personal_margin_left"
+                         style="width:100%; display: flex; justify-content: space-between">
+                        <div>
+                            <div style="display: flex; ">
+                                <img src="{{image}}" width="100" height="100" style="margin-right: 10px">
+                                <div style="line-height: 0.9">
+                                    <div>{{name}}</div>
+                                    <br>
+                                    <div>{{vendorCode}}</div>
+                                    <br>
+                                    <div>{{price}} грн.</div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; justify-content: space-around; margin-left: 15px">
+                            <div onclick="openModal('{{name}}', '{{description}}', {{properties}})"
+                                 style="cursor: pointer">
+                                <img src="/images/info.svg"><br>
+                            </div>
+                            <a href="/products/editProduct/{{id}}">
+                                <img src="/images/edit.svg">
+                            </a>
+                            <div onclick="openDelete({{id}})" style="cursor: pointer">
+                                <img src="/images/delete.svg"><br>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                    </div>
+                </div>
+                <hr size="1">
+                <div class="popup-fade" style="display: none; justify-content: center; align-items: center" id="{{id}}">
+                    <div id="demo-modal" class="mol" role="dialog" tabindex="-1">
+                        <div class="mol-inner">
+                            <div class="mol-header">
+                                <span style="text-align: center; font-size: 4vh;">Попередження!!!</span>
+                            </div>
+                            <br>
+                            <div class="mol_content">
+                                <div class="mc_2">
+                                    <div style="font-size: 2vh" align="center">
+                                        Ви впевнені що хочете видалити товар {{name}} ?
+                                    </div>
+                                    <br>
+                                    <br>
+
+                                </div>
+
+                            </div>
+                            <div style="display: flex; justify-content: space-around">
+                                <form action="/products/deleteProduct/{{id}}" method="post">
+                                    <input type="submit" value="Так" class="sign_button"
+                                           style="background-color: #dc2c36" onclick="deleteStock({{id}})">
+                                </form>
+
+                                <div id="popup_butt" class="sign_button"
+                                     style="cursor: pointer; background-color: #676767" onclick="closeDelete({{id}})">
+                                    Ні
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {{/each}}
+
+        </div>
+        </div>
+    </div>
+
+    <div class="popup-fade" style="display: none; justify-content: center; align-items: center"
+         id="modal">
+        <div id="demo-modal" class="mol" role="dialog" tabindex="-1">
+            <div class="mol-inner">
+                <div class="mol-header">
+                    <span style="text-align: center; font-size: 4vh;" id="nnn"></span>
+                </div>
+                <br>
+                <div>
+                    <div class="mc_2">
+                    <span>
+                        Опис: &nbsp;
+                    </span>
+                        <span id="opys">
+                    </span>
+                    </div>
+                    <br>
+                    <div class="mc_2">
+                        <div>
+                            Характеристики: &nbsp;
+                        </div>
+                        <br>
+                        <div id="props">
+                        </div>
+                    </div>
+
+                </div>
+                <div style="display: flex; justify-content: space-around">
+
+                    <div id="popup_butt" class="sign_button"
+                         style="cursor: pointer; background-color: #676767"
+                         onclick="closeModal()">
+                        Закрити
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        function openModal(name, description, properties) {
+            const modal = document.getElementById('modal');
+            modal.style.display = 'flex';
+
+            const nameEl = document.getElementById('nnn');
+            nameEl.innerText = name;
+
+            const desc = document.getElementById('opys');
+            desc.innerText = description;
+
+            const props = document.getElementById('props');
+            props.innerHTML = '';
+            Object.entries(properties).forEach(([key, value]) => {
+                props.innerHTML += key;
+                props.innerHTML += ': ';
+                props.innerHTML += value;
+                props.innerHTML += '<br>';
+            })
+
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('modal');
+            modal.style.display = 'none';
+        }
+
+
+        function openDelete(id) {
+            const modal = document.getElementById(id);
+            modal.style.display = 'flex';
+        }
+
+        function closeDelete(id) {
+            const modal = document.getElementById(id);
+            modal.style.display = 'none';
+        }
+
+        function deleteProduct(id) {
+            document.getElementById(id + 'el').remove();
+        }
+    </script>

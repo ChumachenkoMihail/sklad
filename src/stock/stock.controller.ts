@@ -18,6 +18,14 @@ export class StockController {
 
 
 
+    @Get('/createStock')
+    @UseGuards(AccessTokenGuard)
+    createStockRender(
+        @Req() req: Request, @Res() res
+    ){
+        return res.render('createStock.hbs', {title: 'Новий склад'})
+    }
+
     @Post('/createStock')
     @UseGuards(AccessTokenGuard)
     @ApiResponse({
@@ -30,6 +38,19 @@ export class StockController {
         @CurrentUser('userId') userId: number,
     ){
         return this.stockService.createStock(body, userId);
+    }
+
+    @Get('/editStock/:stockId')
+    @UseGuards(AccessTokenGuard)
+    async editStockRender(
+        @Req() req: Request,
+        @Res() res,
+        @Param('stockId') stockId: number,
+        @CurrentUser('userId') userId: number,
+    ){
+        const result = await this.stockService.getStockById(Number(stockId), userId);
+        console.log(result);
+        return res.render('editStock.hbs', {title: 'Новий склад', result: result})
     }
 
     @Post('/editStock/:stockId')
@@ -55,10 +76,12 @@ export class StockController {
     })
     deleteStock(
         @Req() req: Request,
+        @Res() res,
         @Param('stockId') stockId: number,
         @CurrentUser('userId') userId: number,
     ){
-        return this.stockService.deleteStock(Number(stockId), userId);
+        const result = this.stockService.deleteStock(Number(stockId), userId);
+        res.redirect('/stock/getStocks')
     }
 
     @Get('getStocks')
@@ -73,8 +96,7 @@ export class StockController {
         @CurrentUser('userId') userId: number,
     ){
         const result = await this.stockService.getUserStocks(userId);
-        console.log(result);
-        return res.render('stocks.hbs', {result: result})
+        return res.render('stocks.hbs', {result: result, title: 'Склади'})
     }
 
     @Get('getStockInfo/:stockId')
@@ -89,7 +111,31 @@ export class StockController {
         @Param('stockId') stockId: number,
         @CurrentUser('userId') userId: number,
     ){
-        const result = await this.stockService.getStockById(Number(stockId), userId);
-        return res.render('stockById.hbs', {result: result});
+        const result = await this.stockService.getStockWithProducts(Number(stockId), userId);
+        console.log(result);
+        return res.render('stockById.hbs', {result: result, title: result.stock.name});
+    }
+
+    @Post('/changeProductCount/:stockId/:productId/:newCount')
+    @UseGuards(AccessTokenGuard)
+    async changeProductCount(
+        @Req() req: Request,
+        @Param('stockId') stockId: number,
+        @Param('productId') productId: number,
+        @Param('newCount') newCount: number,
+        @CurrentUser('userId') userId: number,
+    ){
+        return await this.stockService.changeProductCount(Number(stockId), Number(productId), Number(newCount));
+    }
+
+    @Post('/deleteProductFromStock/:stockId/:productId')
+    @UseGuards(AccessTokenGuard)
+    async deleteProduct(
+        @Req() req: Request,
+        @Param('stockId') stockId: number,
+        @Param('productId') productId: number,
+        @CurrentUser('userId') userId: number,
+    ){
+        return await this.stockService.deleteProduct(Number(stockId), Number(productId));
     }
 }

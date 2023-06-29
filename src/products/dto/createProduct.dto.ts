@@ -40,5 +40,9 @@ export class CreateProductDto  {
 
 
 
-    //todo: add image
+    @ApiProperty({
+        example: 'https://content.rozetka.com.ua/goods/images/big/303799642.jpg',
+        description: 'Product image'
+    })
+    image: string;
 }

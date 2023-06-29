@@ -14,7 +14,7 @@ export class StockManagersEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne(() => StockEntity)
+    @ManyToOne(() => StockEntity, {onDelete: "CASCADE"})
     @JoinColumn({ name: 'stock_id' })
     stock: StockEntity;
 

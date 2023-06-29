@@ -1,25 +1,23 @@
 <header class="sticky-header">
     <div class="header-menu">
-        <a href="/" class="header-logo"><img src="/images/logo.jpg" alt="image" class="header-logo" ></a>
 
 
         {{#if authenticated}}
+            <a href="/stock/getStocks" class="header-logo"><img src="/images/logo.jpg" alt="image" class="header-logo" ></a>
             <qwe class="header-content">
-                <a href="/stocks/getStocks" class="header-content">Склади</a>
-             <!--   <ul class="header-submenu">
-                    <li><a href="/enter">Внести показання</a></li>
-                    <li><a href="/accruals">Історія нарахувань</a></li>
-                    <li><a href="/pay">Сплатити послуги</a></li>
-                    <li><a href="/payments">Історія платежів</a></li>
-                </ul>  -->
+                <a href="/stock/getStocks" class="header-content">Склади</a>
+<!--                <ul class="header-submenu">-->
+<!--                    <li><a href="/enter">Додати склад</a></li>-->
+<!--                </ul>-->
             </qwe>
             <a href="/products/getProducts" class="header-content">Товари</a>
             <a href="/personal" class="header-content">Категорії</a>
             <a href="/personal" class="header-content">Менеджер</a>
             <a class="header-content" onclick="logout()">Вийти</a>
         {{else}}
+            <a href="/stock/getStocks" class="header-logo"><img src="/images/logo.jpg" alt="image" class="header-logo" ></a>
             <a href="/faq" class="header-content">Часті питання</a>
-            <a href="/signin" class="header-content">Увійти</a>
+            <a href="/" class="header-content">Увійти</a>
         {{/if}}
     </div>
 </header>
@@ -27,12 +25,15 @@
     function logout() {
         const cookies = document.cookie.split(";");
 
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i];
-            const eqPos = cookie.indexOf("=");
-            const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
-            document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
-        }
-        location.href = '/';
+        deleteCookie('jwt');
+        deleteCookie('auth')
+        setTimeout(()=>{
+            location.href = '/';
+        },0)
+
+    }
+
+    function deleteCookie(name) {
+        document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
     }
 </script>

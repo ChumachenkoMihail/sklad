@@ -5,6 +5,8 @@ import {TypeOrmModule} from "@nestjs/typeorm";
 import {StockEntity} from "../entities/stock.entity";
 import {UsersModule} from "../users/user.module";
 import {StockManagersEntity} from "../entities/stockManagers.entity";
+import {StockProductsEntity} from "../entities/stockProducts.entity";
+import {ProductsEntity} from "../entities/products.entity";
 
 
 @Module({
@@ -13,7 +15,7 @@ import {StockManagersEntity} from "../entities/stockManagers.entity";
         StockService,
     ],
     imports: [
-        TypeOrmModule.forFeature([StockEntity, StockManagersEntity]),
+        TypeOrmModule.forFeature([StockEntity, StockManagersEntity, StockProductsEntity, ProductsEntity]),
         UsersModule
     ],
     exports: [StockService]

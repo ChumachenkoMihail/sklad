@@ -36,7 +36,7 @@ export class AuthController {
   reg(
       @Res() res,
   ){
-    return res.render('register.hbs')
+    return res.render('register.hbs', {title: 'Реєстрація'})
   }
   @Post('/register')
   @ApiResponse({

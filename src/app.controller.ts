@@ -8,7 +8,7 @@ export class AppController {
 
   @Get('/')
   main(@Req() req: Request, @Res() res) {
-return res.render('login.hbs')
+return res.render('login.hbs', {title: 'Логін'})
   }
 
 }

@@ -18,7 +18,7 @@ export class ProductsController {
 
 
     @Get('/createProduct')
-    // @UseGuards(AccessTokenGuard)
+    @UseGuards(AccessTokenGuard)
     getCreateProduct(
         @Res() res
     ){
@@ -39,6 +39,25 @@ export class ProductsController {
         return this.productsService.createProduct(body, userId);
     }
 
+
+
+    @Get('/editProduct/:productId')
+    @UseGuards(AccessTokenGuard)
+    @ApiResponse({
+        status: 401,
+        description: 'Unauthorized',
+    })
+    async updateProductRender(
+        @Req() req: Request,
+        @Res() res,
+        @Param('productId') productId: number,
+        @CurrentUser('userId') userId: number,
+    ){
+        console.log(productId);
+        const result = await this.productsService.getProductById(Number(productId), userId);
+        console.log(result);
+        return res.render('editProduct.hbs', {title: 'Редагувати товар', result: result})
+    }
     @Post('/editProduct/:productId')
     @UseGuards(AccessTokenGuard)
     @ApiResponse({
@@ -60,12 +79,14 @@ export class ProductsController {
         status: 401,
         description: 'Unauthorized',
     })
-    deleteProduct(
+    async deleteProduct(
         @Req() req: Request,
+        @Res()res,
         @Param('productId') productId: number,
         @CurrentUser('userId') userId: number,
     ){
-       return this.productsService.deleteProduct(Number(productId), userId);
+       await this.productsService.deleteProduct(Number(productId), userId);
+       res.redirect('/products/getProducts');
     }
 
     @Get('getProducts')
@@ -79,8 +100,9 @@ export class ProductsController {
         @Res()res,
         @CurrentUser('userId') userId: number,
     ){
-        const result = await this.productsService.getUserProducts(userId);
-    return res.render('GetProducts.hbs',{result: result});
+        const result = await this.productsService.getUserProducts(Number(userId));
+        // console.log(result);
+    return res.render('products.hbs',{result: result});
     }
 
     @Get('getProductInfo/:productId')

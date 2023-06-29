@@ -27,17 +27,15 @@ export class ProductsService {
         if (ifProductExists) {
             throw new BadRequestException('Product with vendor code already exists')
         }
-        console.log('here')
         const user = await this.usersService.findUserById(userId);
-console.log('we are here')
         const newProduct = new ProductsEntity();
         newProduct.name = body.name;
         newProduct.vendorCode = body.vendorCode;
         newProduct.description = body.description;
         newProduct.user = user;
         newProduct.properties = body.properties;
-        newProduct.image = '';
-        newProduct.price = body.price;
+        newProduct.image = body.image;
+        newProduct.price = Number(body.price);
         if (body.categoryId) {
             const ifCategoryExists = await this.categoriesService.getCategoryById(body.categoryId, userId);
             if (!ifCategoryExists) {
@@ -46,11 +44,13 @@ console.log('we are here')
             newProduct.category = ifCategoryExists;
         }
         const createdProduct = await this.productsRepository.save(newProduct);
-
+    console.log('we are here');
         const newManager = new ProductsManagerEntity();
         newManager.product_id = createdProduct.id;
         newManager.user = user;
         await this.productsManagerRepository.save(newManager);
+        console.log('we are here2');
+
         return createdProduct
     }
 
@@ -94,24 +94,27 @@ console.log('we are here')
                 id
             }
         })
-        const fullCategory = await this.categoriesService.getFullCategoryName(product.category.id, userId);
-        product.fullCategoryName = fullCategory;
+        if(product?.category){
+            const fullCategory = await this.categoriesService.getFullCategoryName(product.category.id, userId);
+            product.fullCategoryName = fullCategory;
+        }
         return product;
     }
 
     async getProductByIdOwner(id, userId) {
         const product: any =  await this.productsRepository.findOne({
-            select: ['id','name','description', 'properties', 'image', 'vendorCode', 'price', 'category'],
-            relations: {category: true},
+            // select: ['id','name','description', 'properties', 'image', 'vendorCode', 'price', 'category'],
+            select: ['id','name','description', 'properties', 'image', 'vendorCode', 'price'],
+            // relations: {category: true},
             where: {
-                id,
-                user: {
-                    id: userId
-                }
+                id
             }
         })
-        const fullCategory = await this.categoriesService.getFullCategoryName(product.category.id, userId);
-        product.fullCategoryName = fullCategory;
+        if(product?.category){
+            const fullCategory = await this.categoriesService.getFullCategoryName(product.category.id, userId);
+            product.fullCategoryName = fullCategory;
+        }
+        console.log(product);
         return product;
     }
 
@@ -121,14 +124,16 @@ console.log('we are here')
         if (!ifProductWithIdExists) {
             throw new BadRequestException('Product with current id does not exists');
         }
-
+    console.log(body.categoryId);
         const ifStockWithNewNameExists = await this.getProductByVendorCode(body.vendorCode, userId);
         if (ifStockWithNewNameExists) {
             throw new BadRequestException('Product with vendor code already exists');
         }
-        const ifCategoryExists = await this.categoriesService.getCategoryById(body.categoryId, userId);
-        if (!ifCategoryExists) {
-            throw new BadRequestException('No required category id')
+        if(body.categoryId){
+            const ifCategoryExists = await this.categoriesService.getCategoryById(body.categoryId, userId);
+            if (!ifCategoryExists) {
+                throw new BadRequestException('No required category id')
+            }
         }
         if (body.name) {
             await this.productsRepository.update({
@@ -173,7 +178,15 @@ console.log('we are here')
             await this.productsRepository.update({
                 id: ifProductWithIdExists.id
             }, {
+                //@ts-ignore
                 category: ifCategoryExists,
+            })
+        }
+        if (body.image) {
+            await this.productsRepository.update({
+                id: ifProductWithIdExists.id
+            }, {
+                image: body.image,
             })
         }
         return {message: 'Success'};
@@ -181,8 +194,9 @@ console.log('we are here')
 
     async deleteProduct(productId, userId) {
         const ifStockWithIdExists = await this.getProductByIdOwner(productId, userId);
+        console.log(ifStockWithIdExists);
         if (!ifStockWithIdExists) {
-            throw new BadRequestException('Stock with current id does not exists');
+            throw new BadRequestException('Product with current id does not exists');
         }
 
         return await this.productsRepository.delete({
@@ -194,17 +208,29 @@ console.log('we are here')
         const products = await this.productsManagerRepository.createQueryBuilder('products')
             .where("user_id = :id", {id : userId})
             .getMany()
+        // console.log(products);
         const productsIds = new Set();
         products.map(products => {
             productsIds.add(products.product_id);
         })
         const stockIdsArray = Array.from(productsIds);
 
-        return await this.productsRepository.find({
+        const productIdsRaw = await this.productsRepository.find({
             relations: {user: true},
             where: {
                 id: In(stockIdsArray)
             }
         })
+        // console.log(productIdsRaw);
+
+        productIdsRaw.map(ids => {
+            console.log(ids.properties);
+            // console.log(ids);
+            if(ids?.properties){
+                ids.properties = JSON.stringify(ids.properties[0])
+            }
+        })
+
+        return productIdsRaw
     }
 }

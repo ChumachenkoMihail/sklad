@@ -14,7 +14,7 @@ export class ProductsManagerEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne(() => ProductsEntity)
+    @ManyToOne(() => ProductsEntity, {onDelete: "CASCADE"})
     @JoinColumn({ name: 'product_id' })
     product: ProductsEntity;
 

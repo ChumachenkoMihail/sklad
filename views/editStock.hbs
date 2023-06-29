@@ -1,0 +1,46 @@
+<body>
+{{>header}}
+<div class="reg-content" align="center">
+    <form method="post" id="form">
+        <div>
+            <h1 class="form-title" id="greg">Редагувати склад</h1>
+        </div>
+        <div class="reg-group">
+            <input type="text" class="reg-input" placeholder="Назва складу" required name="name" id="spec" value="{{result.name}}">
+        </div>
+        <div class="reg-group">
+            <input type="text" class="reg-input" placeholder="Опис складу" required name="description" id="spec" value="{{result.description}}">
+        </div>
+        <div class="reg-group">
+            <input type="text" class="reg-input" placeholder="Адреса склада" required
+                   id="spec" name="address" value="{{result.address}}">
+        </div>
+        <br>
+        <div>
+            <input type="submit" class="reg-button" value="Зберегти" id="spec">
+        </div>
+    </form>
+</div>
+</body>
+
+<script>
+    $('#form').on('submit', function(e){
+        e.preventDefault();
+
+        let form = $(this);
+        let data = form.serializeArray();
+        console.log(data);
+        $.ajax({
+            type: 'POST',
+            url: '/stock/editStock/{{result.id}}',
+            data: data,
+            success: function (){
+                location.href= '/stock/getStocks'
+            },
+            error: function (xhr, ajaxOptions, thrownError){
+                alert(xhr.responseJSON.message);
+            }
+        })
+
+    })
+</script>

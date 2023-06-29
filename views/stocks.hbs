@@ -1,99 +1,158 @@
 <div class="main">
+    <style>
+        a:hover {
+            text-decoration: none !important;
+        }
+
+        .popup-fade:before {
+            content: '';
+            background: #000;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.2;
+            z-index: 9999;
+        }
+
+        .sign_button {
+            width: 5vw;
+            height: 5vh;
+            border-radius: 15px;
+            /*background-color: #293498;*/
+            color: white;
+            text-align: center;
+            line-height: 5vh;
+        }
+
+        .mol {
+            align-items: center;
+            justify-content: center;
+            position: fixed;
+            z-index: 9999;
+            top: 40%;
+            width: 100%;
+            height: 100%;
+        }
+
+        .mol[open] {
+            display: flex;
+        }
+
+        .mol-inner {
+            border: 3px solid #000000;
+            background-color: white;
+            border-radius: 1em;
+            max-width: 600px;
+            padding: 2em;
+            margin: auto;
+        }
+
+        .mol-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mol_content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mc_2 {
+            margin-left: 5px;
+        }
+    </style>
     {{>header}}
-    <div style="display: flex; justify-content: space-around">
-    <div class="person_content">
-        <div style="display: flex; justify-content: space-between">
-            <div class="personal_margin_top personal_margin_left">
-                Назва склада: <br>
-                Адреса склада:<br>
-                Опис склада:
-            </div>
-
-            <div>
-        <!--
-            <div class="personal_margin_left personal_margin_top">
-                Загальна площа: {{square}} м.кв.<br>
-                Опалювальна: {{heated_square}} м.кв.<br>
-                Проживають: {{tenants}}<br>
-            </div>
-        -->
-        </div>
-        <hr size="2" noshade>
-    <!--
-     <div style="display: flex; justify-content: space-between">
-            <div class="personal_margin_top personal_margin_left">
-                <a href="/enter">Внести показання</a>
-            </div>
-            <div class="personal_margin_top">
-                <a href="/accruals">Статистика нарахувань</a>
-            </div>
-            <div class="personal_margin_top">
-                <a href="pay">Сплатити послуги</a>
-            </div>
-            <div class="personal_margin_top personal_margin_left">
-                <a href="/payments">Історія платежів</a>
-            </div>
-            -->
-        </div>
-        <br><br>
-        <!--
-           <div>
-            {{#each counters}}
-                 <div style="display: flex; justify-content: space-around">
-                    <div class="counter">
-                        <table width="95%">
-                            <tr align="center">
-                                <td style="color: #5041eb">
-                                    Назва послуги
-                                </td>
-                                <td style="color: #5041eb">
-                                    Останні показання
-                                </td>
-                            </tr>
-                            <tr style="margin-left: 30px">
-                                <td>
-                                    {{service_name}} <br>
-                                    <z style="opacity: 0.7">
-                                        (o.p {{schet}} ) <br>
-                                        Лічильник № {{counter_number}}<br>
-                                    </z>
-                                </td>
-                                <td align="center">
-                                    {{last_value}}
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-                </div>
-                <br>
-            {{/each}}
-        </div>
-        -->
-    </div>
-</div>
-<!--<p align="center" style="margin-bottom: 25px">Мои объекты:</p>
-<div class="person_objects_row">
-    <div class="person_object">
-        <div class="obj_top" align="center">
-            {{street}}<br>
-            д. {{house}}<br>
-            кв. {{flat}}<br>
-        </div>
-        <div align="center">
-            Показать историю <a href="#">начислений</a> / <a href="#">оплаты</a>
-        </div>
-        <div class="smt">
-            <span>Cумма к оплате:</span>
-            <span>0,00 грн</span>
-        </div>
+    <div class="person_head">
         <div>
-            <form>
-                <input type="submit" value="Оплатить" class="button">
-            </form>
+            <p style="text-decoration: underline"><b>Мої склади</b></p>
+            <br>
+            <a href="/stock/createStock">
+                Додати склад
+            </a>
+        </div>
+        <div></div>
+    </div>
+    <div style="display: flex; justify-content: space-around">
+        <div class="person_content">
+            {{#each result}}
+                <div id="{{id}}el">
+                    <div style="display: flex; justify-content: space-between">
+                        <div class="personal_margin_top personal_margin_left"
+                             style="width:100%; display: flex; justify-content: space-between">
+                            <a href="/stock/getStockInfo/{{id}}">
+                                <div>
+                                    Назва склада: {{name}}<br>
+                                    Адреса склада: {{address}}<br>
+                                    Опис склада: {{description}}
+                                </div>
+                            </a>
+                            <div>
+                                <div onclick="openModal({{id}})" style="cursor: pointer">
+                                    <img src="/images/delete.svg"><br>
+                                </div>
+                                <a href="/stock/editStock/{{id}}">
+                                    <img src="/images/edit.svg">
+                                </a>
+                            </div>
+                        </div>
+                        <div>
+                        </div>
+                    </div>
+                    <hr size="1">
+                    <div class="popup-fade" style="display: none; justify-content: center; align-items: center" id="{{id}}">
+                                            <div id="demo-modal" class="mol" role="dialog" tabindex="-1" >
+                                                <div class="mol-inner">
+                                                    <div class="mol-header">
+                                                        <span style="text-align: center; font-size: 4vh;">Попередження!!!</span>
+                                                    </div>
+                                                    <br>
+                                                    <div class="mol_content">
+                                                        <div class="mc_2">
+                                                            <div style="font-size: 2vh" align="center">
+                                                                Ви впевнені що хочете видалити склад {{name}} ?
+                                                            </div>
+                                                            <br>
+                                                            <br>
+
+                                                        </div>
+
+                                                    </div>
+                                                    <div style="display: flex; justify-content: space-around">
+                                                        <form action="/stock/deleteStock/{{id}}" method="post">
+                                                            <input type="submit" value="Так" class="sign_button" style="background-color: #dc2c36" onclick="deleteStock({{id}})">
+                                                        </form>
+
+                                                        <div id="popup_butt" class="sign_button" style="cursor: pointer; background-color: #676767" onclick="closeModal({{id}})">
+                                                            Ні
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                    </div>
+
+                </div>
+            {{/each}}
+
         </div>
     </div>
-</div>-->
-
-
-
 </div>
+<script>
+    function openModal(id) {
+        const modal = document.getElementById(id);
+        modal.style.display = 'flex';
+    }
+
+    function closeModal(id){
+        const modal = document.getElementById(id);
+        modal.style.display = 'none';
+    }
+
+    function deleteStock(id){
+       document.getElementById(id+ 'el').remove();
+    }
+</script>

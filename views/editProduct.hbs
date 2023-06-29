@@ -1,0 +1,51 @@
+<body>
+{{>header}}
+<div class="reg-content" align="center">
+    <form method="post" id="form">
+        <div>
+            <h1 class="form-title" id="greg">Редагувати товар</h1>
+        </div>
+        <div class="reg-group">
+            <input type="text" class="reg-input" placeholder="Назва товару" required name="name" id="spec" value="{{result.name}}">
+        </div>
+        <div class="reg-group">
+            <input type="text" class="reg-input" placeholder="Опис товару" required name="description" id="spec" value="{{result.description}}">
+        </div>
+        <div class="reg-group">
+            <input type="text" class="reg-input" placeholder="Артикул" required id="spec" name="vendorCode" value="{{result.vendorCode}}">
+        </div>
+        <div class="reg-group">
+            <input type="text" class="reg-input" placeholder="Фото (url)" required id="spec" name="image" value="{{result.image}}">
+        </div>
+        <div class="reg-group">
+            <input type="text" class="reg-input" placeholder="Ціна" required id="spec" name="price" value="{{result.price}}">
+        </div>
+        <br>
+        <div>
+            <input type="submit" class="reg-button" value="Зберегти" id="spec">
+        </div>
+    </form>
+</div>
+</body>
+
+<script>
+    $('#form').on('submit', function(e){
+        e.preventDefault();
+
+        let form = $(this);
+        let data = form.serializeArray();
+        console.log(data);
+        $.ajax({
+            type: 'POST',
+            url: '/products/editProduct/{{result.id}}',
+            data: data,
+            success: function (){
+                location.href= '/products/getProducts'
+            },
+            error: function (xhr, ajaxOptions, thrownError){
+                alert(xhr.responseJSON.message);
+            }
+        })
+
+    })
+</script>

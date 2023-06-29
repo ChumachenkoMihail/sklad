@@ -6,6 +6,8 @@ import {UsersService} from "../users/users.service";
 import {CreateStockDto} from "./dto/createStock.dto";
 import {UpdateStockDto} from "./dto/updateStock.dto";
 import {StockManagersEntity} from "../entities/stockManagers.entity";
+import {ProductsEntity} from "../entities/products.entity";
+import {StockProductsEntity} from "../entities/stockProducts.entity";
 
 
 @Injectable()
@@ -13,6 +15,12 @@ export class StockService {
     constructor(
         @InjectRepository(StockEntity)
         private readonly stockRepository: Repository<StockEntity>,
+
+        @InjectRepository(StockProductsEntity)
+        private readonly stockProductsRepository: Repository<StockProductsEntity>,
+
+        @InjectRepository(ProductsEntity)
+        private readonly productsRepository: Repository<ProductsEntity>,
 
         @InjectRepository(StockManagersEntity)
         private readonly stockManagersEntity: Repository<StockManagersEntity>,
@@ -24,7 +32,7 @@ export class StockService {
     async createStock(body: CreateStockDto, userId: number) {
         const ifStockExists = await this.getStockByName(body.name, userId);
         if(ifStockExists){
-            throw new BadRequestException('Stock name already exists')
+            throw new BadRequestException('Склад з такою назвою вже існує')
         }
         const user = await this.usersService.findUserById(userId);
 
@@ -47,12 +55,12 @@ export class StockService {
     async updateStock(stockId: number, body: UpdateStockDto, userId: number){
         const ifStockWithIdExists = await this.getStockById(stockId, userId);
         if(!ifStockWithIdExists){
-            throw new BadRequestException('Stock with current id does not exists');
+            throw new BadRequestException('Такого складу не існує');
         }
 
         const ifStockWithNewNameExists = await this.getStockByName(body.name, userId);
         if(ifStockWithNewNameExists){
-            throw new BadRequestException('Stock name already exists');
+            throw new BadRequestException('Склад з такою назвою вже існує');
         }
         if(body.name){
             await this.stockRepository.update({
@@ -133,6 +141,51 @@ export class StockService {
             where: {
                 id: id
             }
+        })
+    }
+
+    async getStockWithProducts(id: number, userId: number){
+        const manager = await this.stockManagersEntity.findOne({
+            where: {
+                stock_id: id,
+                user_id: userId
+            }
+        })
+        if(!manager){
+            return ;
+        }
+
+        const stock = await this.stockRepository.findOne({
+            where: {
+                id: id
+            }
+        })
+        const productIdsRaw = await this.stockProductsRepository.find({
+            relations: ['product'],
+            where: {
+                stock_id: stock.id
+            }
+        })
+        productIdsRaw.map(ids => {
+            ids.product.properties = JSON.stringify(ids.product.properties[0])
+        })
+        return {stock: stock, products: productIdsRaw}
+    }
+
+    async changeProductCount(stock_id: number, product_id: number, newCount: number){
+        return await this.stockProductsRepository.update(
+            {
+                stock_id: stock_id,
+                product_id: product_id,
+            },
+            {count: newCount}
+        )
+    }
+
+    async deleteProduct(stock_id: number, product_id: number){
+        return await this.stockProductsRepository.delete({
+            stock_id: stock_id,
+            product_id: product_id,
         })
     }
 

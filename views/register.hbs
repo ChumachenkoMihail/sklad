@@ -9,10 +9,10 @@
             <input type="email" class="reg-input" placeholder="Логін" name="email" required id="spec">
         </div>
         <div class="reg-group">
-            <input type="password" class="reg-input" placeholder="Пароль" name="password" required pattern="[\w]{6,12}" title="Пароль має містити від 6 до 12 символів, складатися з букв латинського алфавіту та цифр, мати одну велику літеру" id="spec">
+            <input type="password" class="reg-input" placeholder="Пароль" name="password" required pattern="^((?!.*[\s])(?=.*[A-Z])(?=.*\d).{8,128})" title="Пароль має містити від 6 до 12 символів, складатися з букв латинського алфавіту та цифр, мати одну велику літеру" id="spec">
         </div>
         <div class="reg-group">
-            <input type="submit" class="reg-button" value="Увійти" id="spec">
+            <input type="submit" class="reg-button" value="Реєстрація" id="spec">
         </div>
         <br>
         <div>

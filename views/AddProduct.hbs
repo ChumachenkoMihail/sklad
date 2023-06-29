@@ -1,67 +1,113 @@
+{{>header}}
 <body>
 <style>
-    .modal{
+    .modal {
         background-color: rebeccapurple;
     }
 </style>
 <script>
-    let properties = { properties: []}
+    let properties = {properties: []}
 </script>
 
-<form method="post" action="/categories/createCategory">
+<div class="reg-content" align="center">
+    <form method="post" id="form">
+        <div>
+            <h1 class="form-title" id="greg">Новий товар</h1>
+        </div>
+        <div class="reg-group">
+            <input type="text" class="reg-input" placeholder="Назва товару" required name="name" id="spec">
+        </div>
+        <div class="reg-group">
+            <input type="text" class="reg-input" placeholder="Опис товару" required name="description" id="spec">
+        </div>
+        <div class="reg-group">
+            <input type="text" class="reg-input" placeholder="Артикул" required id="spec" name="vendorCode">
+        </div>
+        <div class="reg-group">
+            <input type="text" class="reg-input" placeholder="Ціна" required id="spec" name="price">
+        </div>
+        <div class="reg-group">
+            <input type="url" class="reg-input" placeholder="Фото (url)" required id="spec" name="image">
+        </div>
+        <br>
+        <div>
+            <input type="submit" class="reg-button" value="Новий товар" id="spec">
+        </div>
+    </form>
+</div>
 
-    <div class="reg-group">
-        <input type="text" class="reg-input" placeholder="Назва товару" required pattern="[А-ЯІЇЄ]+[а-яіїє]+ *" name="name">
-    </div>
+<!--<form method="post" action="/categories/createCategory">-->
 
-    <div class="reg-group">
-        <input type="text" class="reg-input" placeholder="Назва товару" required pattern="[А-ЯІЇЄ]+[а-яіїє]+ *" name="description">
-    </div>
+<!--    <div class="reg-group">-->
+<!--        <input type="text" class="reg-input" placeholder="Назва товару" required pattern="[А-ЯІЇЄ]+[а-яіїє]+ *" name="name">-->
+<!--    </div>-->
 
-
-
-    <div class="reg-group">
-        <input type="hidden" name="properties">
-        <input type="button" onclick="openModal()" value="Додати параметр">
-    </div>
-    <div style="display: none" id="modal" class="modal">
-        <input type="text" name="propertyName" placeholder="imya parametra" id="paramName">
-        <input type="text" name="propertyValue" placeholder="znachennya parametra" id="paramValue">
-        <input type="button" onclick="closeModal()" value="Додати">
-    </div>
-
-    <div id="properties">
-
-    </div>
+<!--    <div class="reg-group">-->
+<!--        <input type="text" class="reg-input" placeholder="Назва товару" required pattern="[А-ЯІЇЄ]+[а-яіїє]+ *" name="description">-->
+<!--    </div>-->
 
 
+<!--    <div class="reg-group">-->
+<!--        <input type="hidden" name="properties">-->
+<!--        <input type="button" onclick="openModal()" value="Додати параметр">-->
+<!--    </div>-->
+<!--    <div style="display: none" id="modal" class="modal">-->
+<!--        <input type="text" name="propertyName" placeholder="imya parametra" id="paramName">-->
+<!--        <input type="text" name="propertyValue" placeholder="znachennya parametra" id="paramValue">-->
+<!--        <input type="button" onclick="closeModal()" value="Додати">-->
+<!--    </div>-->
+
+<!--    <div id="properties">-->
+
+<!--    </div>-->
 
 
-    <div class="reg-group">
-        <input type="text" class="reg-input" placeholder="Артикул" required pattern="[А-ЯІЇЄ]+[а-яіїє]+ *" name="vendorCode">
-    </div>
+<!--    <div class="reg-group">-->
+<!--        <input type="text" class="reg-input" placeholder="Артикул" required pattern="[А-ЯІЇЄ]+[а-яіїє]+ *" name="vendorCode">-->
+<!--    </div>-->
 
-    <div class="reg-group">
-        <input type="text" class="reg-input" placeholder="Ціна" required pattern="[А-ЯІЇЄ]+[а-яіїє]+ *" name="price">
-    </div>
+<!--    <div class="reg-group">-->
+<!--        <input type="text" class="reg-input" placeholder="Ціна" required pattern="[А-ЯІЇЄ]+[а-яіїє]+ *" name="price">-->
+<!--    </div>-->
 
 
+<!--    <div>-->
+<!--        <input type="button" class="reg-button" value="OK" id="spec">-->
+<!--    </div>-->
 
-    <div>
-        <input type="button" class="reg-button" value="OK" id="spec">
-    </div>
-
-</form>
+<!--</form>-->
 
 </body>
 
 <script>
-    function openModal(){
+    $('#form').on('submit', function(e){
+        e.preventDefault();
+
+        let form = $(this);
+        let data = form.serializeArray();
+        console.log(data);
+        $.ajax({
+            type: 'POST',
+            url: '/products/createProduct',
+            data: data,
+            success: function (){
+                location.href= '/products/getProducts'
+            },
+            error: function (xhr, ajaxOptions, thrownError){
+                alert(xhr.responseJSON.message);
+            }
+        })
+
+    })
+</script>
+
+<script>
+    function openModal() {
         const modal = document.getElementById('modal');
         modal.style.display = 'block';
     }
 
-    function closeModal(){
+    function closeModal() {
         const paramNameRaw = document.getElementById('paramName');
         const paramValueRaw = document.getElementById('paramValue');
 
@@ -72,8 +118,6 @@
 
         paramValueRaw.value = '';
         paramNameRaw.value = '';
-
-        console.log(properties);
 
         const modal = document.getElementById('modal');
         modal.style.display = 'none';

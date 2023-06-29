@@ -1,0 +1,317 @@
+<div class="main">
+    <style>
+        a:hover {
+            text-decoration: none !important;
+            opacity: 0.6 !important;
+        }
+
+        a {
+            text-decoration: none !important;
+            color: black !important;
+            opacity: 1 !important;
+        }
+
+        .popup-fade:before {
+            content: '';
+            background: #000;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.2;
+            z-index: 9999;
+        }
+
+        .sign_button {
+            width: 7vw;
+            height: 35px;
+            border-radius: 15px;
+            /*background-color: #293498;*/
+            color: white;
+            text-align: center;
+            line-height: 3vh;
+            word-break: break-word;
+        }
+
+        .mol {
+            align-items: center;
+            justify-content: center;
+            position: fixed;
+            z-index: 9999;
+            top: 40%;
+            width: 100%;
+            height: 100%;
+        }
+
+        .mol[open] {
+            display: flex;
+        }
+
+        .mol-inner {
+            border: 3px solid #000000;
+            background-color: white;
+            border-radius: 1em;
+            max-width: 600px;
+            padding: 2em;
+            margin: auto;
+        }
+
+        .mol-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mol_content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mc_2 {
+            margin-left: 5px;
+        }
+        .bbb{
+            border: 1px solid black;
+            padding: 3px;
+        }
+    </style>
+    {{>header}}
+    <div class="person_head">
+        <div>
+            <div style="">Склад: "{{result.stock.name}}"; &emsp; {{result.stock.address}}</div>
+            <br>
+            <a href="/stock/createStock">
+                Додати товар
+            </a>
+        </div>
+        <div></div>
+    </div>
+    <div style="display: flex; justify-content: space-around">
+        <div class="person_content">
+            {{#each result.products}}
+                <div id="{{id}}el">
+                    <div style="display: flex; justify-content: space-between">
+                        <div class="personal_margin_top personal_margin_left"
+                             style="width:100%; display: flex; justify-content: space-between">
+                            <div>
+                                <div style="display: flex; ">
+                                    <img src="{{product.image}}" width="100" height="100" style="margin-right: 10px">
+                                    <div style="line-height: 0.9">
+                                        <div>{{product.name}}</div>
+                                        <br>
+                                        <div>{{product.vendorCode}}</div>
+                                        <br>
+                                        <div>{{product.price}} грн.</div>
+                                        <br>
+                                        <div>{{count}} шт.</div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div style="display: flex; flex-direction: column; justify-content: space-around; margin-left: 15px">
+                                <div onclick="openModal('{{product.name}}', '{{product.description}}', {{product.properties}})"
+                                     style="cursor: pointer">
+                                    <img src="/images/info.svg"><br>
+                                </div>
+                                <div onclick="changeOpen('{{product.name}}', {{count}}, {{product.id}})">
+                                    <img src="/images/edit.svg">
+                                </div>
+                                <div onclick="deleteProduct({{product.id}})">
+                                    <img src="/images/delete.svg">
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                        </div>
+                    </div>
+                    <hr size="1">
+                </div>
+            {{/each}}
+
+        </div>
+    </div>
+</div>
+
+<div class="popup-fade" style="display: none; justify-content: center; align-items: center"
+     id="modal">
+    <div id="demo-modal" class="mol" role="dialog" tabindex="-1">
+        <div class="mol-inner">
+            <div class="mol-header">
+                <span style="text-align: center; font-size: 4vh;" id="nnn"></span>
+            </div>
+            <br>
+            <div>
+                <div class="mc_2">
+                    <span>
+                        Опис: &nbsp;
+                    </span>
+                    <span id="opys">
+                    </span>
+                </div>
+                <br>
+                <div class="mc_2">
+                    <div>
+                        Характеристики: &nbsp;
+                    </div>
+                    <br>
+                    <div id="props">
+                    </div>
+                </div>
+
+            </div>
+            <div style="display: flex; justify-content: space-around">
+
+                <div id="popup_butt" class="sign_button"
+                     style="cursor: pointer; background-color: #676767"
+                     onclick="closeModal()">
+                    Закрити
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="popup-fade" style="display: none; justify-content: center; align-items: center"
+     id="change">
+    <div id="demo-modal" class="mol" role="dialog" tabindex="-1">
+        <div class="mol-inner">
+            <div style="display: none" id="stock">{{result.stock.id}}</div>
+            <div style="display: none" id="product"></div>
+            <div class="mol-header">
+                <span style="text-align: center; font-size: 4vh;" id="nnn1"></span>
+            </div>
+            <br>
+            <div style="display: flex; justify-content: space-around">
+                <div class="bbb" onclick="changeMinus(1000)"> -1000 </div>
+                <div class="bbb" onclick="changeMinus(100)" > -100 </div>
+                <div class="bbb" onclick="changeMinus(10)"  > -10 </div>
+                <div class="bbb" onclick="changeMinus(1)"   > -1 </div>
+               <div id="ccc">
+
+               </div>
+                <div class="bbb" onclick="changePlus(1)"> +1 </div>
+                <div class="bbb" onclick="changePlus(10)" > +10 </div>
+                <div class="bbb" onclick="changePlus(100)"  > +100 </div>
+                <div class="bbb" onclick="changePlus(1000)"   > +1000 </div>
+            </div>
+            <br>
+            <div style="display: flex; justify-content: space-around">
+
+                <div id="popup_butt" class="sign_button"
+                     style="cursor: pointer; background-color: #58ce23"
+                     onclick="submitChange()">
+                    Змінити
+                </div>
+
+                <div id="popup_butt" class="sign_button"
+                     style="cursor: pointer; background-color: #676767"
+                     onclick="changeClose()">
+                    Закрити
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<script>
+    function openModal(name, description, properties) {
+        const modal = document.getElementById('modal');
+        modal.style.display = 'flex';
+
+        const nameEl = document.getElementById('nnn');
+        nameEl.innerText = name;
+
+        const desc = document.getElementById('opys');
+        desc.innerText = description;
+
+        const props = document.getElementById('props');
+        props.innerHTML = '';
+        Object.entries(properties).forEach(([key, value]) => {
+            props.innerHTML += key;
+            props.innerHTML += ': ';
+            props.innerHTML += value;
+            props.innerHTML += '<br>';
+        })
+
+    }
+
+    function closeModal() {
+        const modal = document.getElementById('modal');
+        modal.style.display = 'none';
+    }
+
+    function changeOpen(name, count, productId){
+        const modal = document.getElementById('change');
+        modal.style.display = 'flex';
+
+        const nameEl = document.getElementById('nnn1');
+        nameEl.innerText = name;
+
+        const countEl = document.getElementById('ccc');
+        countEl.innerText = count;
+
+        const productEl = document.getElementById('product');
+        productEl.innerText = productId;
+
+    }
+
+    function changeClose(){
+        const modal = document.getElementById('change');
+        modal.style.display = 'none';
+    }
+
+    function changeMinus(value){
+        const countRaw = document.getElementById('ccc');
+        const count = Number(countRaw.innerText);
+        if(count < value){
+            return;
+        }
+        else{
+            countRaw.innerText = String(count - value);
+        }
+    }
+    function changePlus(value){
+        const countRaw = document.getElementById('ccc');
+        const count = Number(countRaw.innerText);
+
+        countRaw.innerText = String(count + value);
+    }
+
+    function submitChange(){
+        const productRaw = document.getElementById('product');
+        const stockRaw = document.getElementById('stock');
+        const countRaw = document.getElementById('ccc');
+        const product = Number(productRaw.innerText);
+        const stock = Number(stockRaw.innerText);
+        const count = Number(countRaw.innerText);
+
+        $.ajax({
+            type: 'POST',
+            url: `/stock/changeProductCount/${stock}/${product}/${count}`,
+            success: function (response){
+                console.log(response);
+                location.href= `/stock/getStockInfo/${stock}`
+            },
+            error: function (xhr, ajaxOptions, thrownError){
+                alert(xhr.responseJSON.message);
+            }
+        })
+    }
+
+    function deleteProduct(product, stock){
+        $.ajax({
+            type: 'POST',
+            url: `/stock/deleteProductFromStock/{{result.stock.id}}/${product}`,
+            success: function (response){
+                console.log(response);
+                location.href= `/stock/getStockInfo/{{result.stock.id}}`
+            },
+            error: function (xhr, ajaxOptions, thrownError){
+                alert(xhr.responseJSON.message);
+            }
+        })
+    }
+</script>

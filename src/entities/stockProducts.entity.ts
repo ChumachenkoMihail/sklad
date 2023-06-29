@@ -13,7 +13,7 @@ export class StockProductsEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne(() => StockEntity)
+    @ManyToOne(() => StockEntity, {onDelete: "CASCADE"})
     @JoinColumn({ name: 'stock_id' })
     stock: StockEntity;
 
@@ -22,7 +22,7 @@ export class StockProductsEntity {
     })
     stock_id: number;
 
-    @ManyToOne(() => ProductsEntity)
+    @ManyToOne(() => ProductsEntity, {onDelete: "CASCADE"})
     @JoinColumn({ name: 'product_id' })
     product: ProductsEntity;
 
