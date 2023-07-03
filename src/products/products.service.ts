@@ -126,7 +126,7 @@ export class ProductsService {
         }
     console.log(body.categoryId);
         const ifStockWithNewNameExists = await this.getProductByVendorCode(body.vendorCode, userId);
-        if (ifStockWithNewNameExists) {
+        if (ifStockWithNewNameExists && ifStockWithNewNameExists.id !== ifProductWithIdExists.id) {
             throw new BadRequestException('Product with vendor code already exists');
         }
         if(body.categoryId){
